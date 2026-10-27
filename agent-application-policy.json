@@ -1,0 +1,20 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "InvokePaymentMCP",
+      "Effect": "Allow",
+      "Action": "bedrock-agentcore:InvokeAgentRuntime",
+      "Resource": [
+        "arn:aws:bedrock-agentcore:ap-southeast-2:142531840386:runtime/PaymentMCP-m89sKCARJd",
+        "arn:aws:bedrock-agentcore:ap-southeast-2:142531840386:runtime/PaymentMCP-m89sKCARJd/runtime-endpoint/DEFAULT"
+      ]
+    },
+    {
+      "Sid": "InvokeConfiguredModel",
+      "Effect": "Allow",
+      "Action": "bedrock:InvokeModel",
+      "Resource": "arn:aws:bedrock:ap-southeast-2::foundation-model/minimax.minimax-m2.5"
+    }
+  ]
+}

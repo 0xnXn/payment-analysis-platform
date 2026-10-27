@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#202724">
+  <title>Payment desk · Workspace</title>
+  <link rel="icon" href="/static/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/style.css?v=20261020-r3">
+  <script src="/static/app.js?v=20261020-r3" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="Payment desk home"><img class="brand-icon" src="/static/icon.svg" alt="" width="30" height="30"><span>payment<span class="brand-light">desk</span></span></a>
+    <button class="workspace-card" id="workspace-details"><span class="workspace-avatar">A</span><span><strong id="workspace-sidebar-name">Workspace</strong><small>Workspace</small></span><span class="workspace-chevron">⌄</span></button>
+    <div class="workspace-label">WORKSPACE</div>
+    <nav class="side-nav" aria-label="Workspace screens">
+      <button class="nav-link nav-active" id="nav-investigations" aria-current="page"><span>⌕</span> Investigations</button>
+      <button class="nav-link" id="nav-payments"><span>▤</span> Payments <span id="payments-nav-count" class="nav-count"></span></button>
+    </nav>
+    <button class="new-button" id="new-investigation"><span>＋</span> New investigation</button>
+    <div class="history-header"><span>RECENT INVESTIGATIONS</span><span id="history-count">00</span></div>
+    <div id="history" class="history"><p class="history-empty">No investigations yet.</p></div>
+    <div class="sidebar-foot"><span class="tiny-dot"></span> Read-only access<br><span class="muted-foot">Payments and investigations</span></div>
+  </aside>
+
+  <div class="shell">
+    <header class="topbar"><div><button id="workspace-header" class="workspace-header">Workspace</button><span class="slash">/</span><span id="current-screen">Investigations</span></div><div class="environment"><button id="workspace-access" class="access-button" hidden>Lock workspace</button><span class="environment-badge" id="environment-label">Test environment</span> <span class="divider"></span><span id="region">Sydney</span></div></header>
+    <main>
+      <div id="investigations-view">
+      <section class="intro"><div><h1>Investigations</h1><p class="intro-copy">Follow the evidence from payment events to the next check.</p></div><span class="read-only"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 5 8 9 8 9s8-4 8-9V6z"/><path d="m8 12 3 3 5-6"/></svg>Read-only workspace</span></section>
+
+      <div class="desk">
+        <section class="query-panel" aria-labelledby="query-title">
+          <div class="section-top"><span class="eyebrow">NEW REQUEST</span></div>
+          <h2 id="query-title">What needs a closer look?</h2><p class="section-description">Enter a payment reference and your question.</p>
+          <form id="query-form">
+            <label for="prompt">Investigation question</label>
+            <div class="textarea-wrap"><textarea id="prompt" name="prompt" rows="6" maxlength="10000" placeholder="What happened to this payment?" required></textarea><div class="input-footer"><span>Ctrl / ⌘ + Enter to submit</span><span id="character-count">0 / 10,000</span></div></div>
+            <button class="submit-button" id="submit" type="submit"><span id="submit-label">Start investigation</span><span id="submit-icon">↗</span></button>
+          </form>
+          <div class="examples"><p class="small-label">START WITH A QUESTION</p><button class="example" data-prompt="Summarise the recorded status and event timeline for {payment_id}. Cite the supporting event IDs."><span>Review the timeline<span class="example-detail">Trace the recorded payment events</span></span><span class="example-arrow">→</span></button><button class="example" data-prompt="For {payment_id}, identify missing outcome evidence and recommended checks. Cite your sources."><span>Check the evidence<span class="example-detail">Identify gaps and uncertainty</span></span><span class="example-arrow">→</span></button><button class="example" data-prompt="Find runbook guidance for an upstream payment timeout. What checks should an operator perform?"><span>Find the next check<span class="example-detail">Consult guidance for upstream timeouts</span></span><span class="example-arrow">→</span></button></div>
+          <div class="query-note"><span>ⓘ</span><p>Investigations use payment records and operational guidance available to your workspace. Payment changes are not permitted.</p></div>
+        </section>
+
+        <section class="report-panel" aria-labelledby="report-title" aria-busy="false" id="report-panel">
+          <div class="report-header"><div class="section-top"><span id="report-title" class="report-title">Investigation report</span></div><div class="report-actions" id="report-actions" hidden><button id="copy" title="Copy report" aria-label="Copy report">Copy</button><button id="download" title="Download Markdown report" aria-label="Download report">Download ↓</button></div></div>
+          <div class="empty-state" id="empty-state"><div class="empty-document" aria-hidden="true"><span></span><span></span><span></span><b>⌕</b></div><h2>Your findings start here</h2><p>Submit a question to review the recorded outcome,<br class="desktop-break"> supporting events and recommended next check.</p><div class="evidence-tags"><span>Payment records</span><span>Events</span><span>Runbooks</span></div></div>
+          <div class="loading-state" id="loading-state" hidden role="status" aria-live="polite"><div class="loader"></div><p class="eyebrow">INVESTIGATION IN PROGRESS</p><h2>Following the evidence…</h2><p>Reviewing payment records and operational guidance.<br>You can continue browsing payments while this completes.</p><span class="elapsed" id="elapsed">0 seconds elapsed</span><div class="wait-note">The report will appear here when the agent responds.</div></div>
+          <div class="error-state" id="error-state" hidden role="alert"><span class="error-symbol">!</span><h2>We couldn’t complete this investigation.</h2><p id="error-message"></p><button id="retry" class="secondary-button">Try again ↗</button></div>
+          <div id="report-result" hidden><div class="result-meta"><span class="result-badge">Agent response</span><span id="result-time"></span><span id="result-duration"></span></div><article id="answer" class="markdown"></article><div class="report-foot"><span>Generated from the investigator’s response. Review its evidence before taking action.</span><span id="request-reference"></span></div></div>
+        </section>
+      </div>
+      </div>
+      <section id="payments-view" hidden aria-labelledby="payments-heading">
+        <section class="intro"><div><h1 id="payments-heading">Payments</h1><p class="intro-copy">Track recorded outcomes. Investigate what needs attention.</p></div><button id="refresh-payments" class="refresh-button">↻ Refresh records</button></section>
+        <div class="payment-metrics" aria-label="Payment summary">
+          <div><span>Total payments</span><strong id="metric-total">—</strong><small>In this workspace</small></div>
+          <div><span><i class="status-dot pending"></i> Pending</span><strong id="metric-pending">—</strong><small>Awaiting a recorded outcome</small></div>
+          <div><span><i class="status-dot settled"></i> Settled</span><strong id="metric-settled">—</strong><small>Recorded as settled</small></div>
+          <div><span><i class="status-dot rejected"></i> Rejected</span><strong id="metric-rejected">—</strong><small>Recorded as rejected</small></div>
+        </div>
+        <section class="payments-card" aria-label="Payment records">
+          <div class="payment-views" role="group" aria-label="Payment views"><button data-payment-view="" aria-pressed="true">All payments</button><button data-payment-view="PENDING" aria-pressed="false">Pending</button><button data-payment-view="REJECTED" aria-pressed="false">Rejected</button><span>Workspace records</span></div>
+          <div class="payments-toolbar"><div class="payments-search"><span aria-hidden="true">⌕</span><input id="payment-search" type="search" placeholder="Search payment ID…" aria-label="Search payment ID"></div><select id="payment-status-filter" aria-label="Filter payment status"><option value="">All statuses</option></select><label class="sr-only" for="payment-sort">Sort payments</label><select id="payment-sort" aria-label="Sort payments"><option value="id">Payment ID</option><option value="updated">Recently updated</option><option value="amount_desc">Amount: high to low</option><option value="amount_asc">Amount: low to high</option></select><button id="clear-payment-filters" class="text-button" hidden>Clear filters</button><button id="export-payments" class="export-button" disabled>Export CSV ↓</button><span id="payment-tenant" class="tenant-label"></span></div>
+          <div class="payments-state" id="payments-loading" hidden role="status"><div class="loader"></div><h2>Loading payment records…</h2><p>Retrieving the latest records for your workspace.</p></div>
+          <div class="payments-state" id="payments-error" hidden role="alert"><span class="error-symbol">!</span><h2>Records couldn’t be loaded.</h2><p id="payments-error-message"></p><button id="retry-payments" class="secondary-button">Try again ↗</button></div>
+          <div class="payments-table-wrap" id="payments-table-wrap" hidden><table class="payments-table"><thead><tr><th scope="col">Payment ID</th><th scope="col">Amount</th><th scope="col">Recorded status</th><th scope="col">Created · UTC</th><th scope="col">Updated · UTC</th><th scope="col"><span class="sr-only">Action</span></th></tr></thead><tbody id="payments-rows"></tbody></table></div>
+          <div id="payments-empty" class="payments-empty" hidden>No payments match your search.</div>
+          <div class="payments-bottom"><span id="payments-count">No records loaded</span><span id="payments-updated"></span></div>
+        </section>
+        <div class="payments-explainer"><span>ⓘ</span><p><strong>A recorded status is the starting point.</strong> A pending payment’s downstream outcome may still be unknown. Open an investigation to review its events and runbook guidance.</p></div>
+      </section>
+      <footer class="page-footer"><span><span class="backend-dot" id="backend-dot"></span><span id="backend-status">Checking backend…</span></span><span>Payment operations <span>·</span> Times shown in UTC</span></footer>
+    </main>
+  </div>
+  <dialog id="access-dialog" class="access-dialog">
+    <form id="access-form">
+      <p class="eyebrow">PAYMENT DESK</p><h2>Access your workspace</h2>
+      <p>Enter your workspace access code to continue.</p>
+      <label for="workspace-password">Access code</label>
+      <input id="workspace-password" type="password" autocomplete="current-password" required>
+      <p id="access-error" class="access-error" role="alert"></p>
+      <button class="submit-button" type="submit" id="access-submit">Continue <span>↗</span></button>
+    </form>
+  </dialog>
+  <dialog id="workspace-dialog" class="product-dialog">
+    <div class="dialog-heading"><div><p class="eyebrow">WORKSPACE</p><h2 id="workspace-dialog-name">Workspace details</h2></div><button data-close-dialog="workspace-dialog" class="close-dialog" aria-label="Close workspace details">×</button></div>
+    <dl class="detail-list"><div><dt>Workspace ID</dt><dd id="workspace-id">—</dd></div><div><dt>Access</dt><dd>Read-only</dd></div><div><dt>Region</dt><dd id="workspace-region">—</dd></div><div><dt>Environment</dt><dd id="workspace-environment">—</dd></div><div><dt>Report retention</dt><dd id="workspace-retention">—</dd></div></dl>
+    <p class="dialog-note">Payment records and investigations are scoped to this workspace.</p>
+    <button id="workspace-lock" class="secondary-button">Lock workspace</button>
+  </dialog>
+  <dialog id="payment-dialog" class="product-dialog">
+    <div class="dialog-heading"><div><p class="eyebrow">PAYMENT DETAILS</p><h2 id="detail-payment-id">Payment</h2></div><button data-close-dialog="payment-dialog" class="close-dialog" aria-label="Close payment details">×</button></div>
+    <div class="detail-summary"><strong id="detail-amount">—</strong><span id="detail-status" class="payment-status"></span></div>
+    <dl class="detail-list"><div><dt>Workspace</dt><dd id="detail-workspace">—</dd></div><div><dt>Created · UTC</dt><dd id="detail-created">—</dd></div><div><dt>Updated · UTC</dt><dd id="detail-updated">—</dd></div><div><dt>Records retrieved · UTC</dt><dd id="detail-fetched">—</dd></div></dl>
+    <p class="dialog-note">Status reflects the stored payment record. Open an investigation to review supporting events and outstanding questions.</p>
+    <button id="detail-investigate" class="submit-button">Open investigation <span>↗</span></button>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

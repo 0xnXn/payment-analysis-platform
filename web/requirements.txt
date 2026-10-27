@@ -1,0 +1,7 @@
+fastapi>=0.115,<1
+uvicorn>=0.34,<1
+boto3>=1.43.103,<2
+python-dotenv>=1,<2
+markdown-it-py>=3,<5
+mcp-proxy-for-aws>=1.6.5,<2
+mcp>=1.23,<2

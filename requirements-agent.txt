@@ -1,0 +1,6 @@
+# Install in .venv-agent, separately from the MCP server's requirements.txt.
+strands-agents==1.61.1
+mcp[cli]>=1.23,<2.2
+boto3>=1,<2
+python-dotenv>=1,<2
+mcp-proxy-for-aws>=1.6.5,<2

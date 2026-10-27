@@ -1,0 +1,5 @@
+mcp[cli]==2.3.0
+psycopg[binary]>=3.2,<4
+python-dotenv>=1,<2
+boto3>=1.35,<2
+certifi>=2024.7.4
